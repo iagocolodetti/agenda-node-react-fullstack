@@ -1,0 +1,546 @@
+openapi: '3.0.2'
+info:
+  title: agenda-node-react-fullstack
+  description: Agenda de contatos.
+  version: '1.0.0'
+  contact:
+    name: Iago Colodetti
+    url: https://github.com/iagocolodetti
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: User
+    description: REST API para Usuário
+  - name: Contact
+    description: REST API para Contato
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+          example: 1
+          description: ID do usuário
+        username:
+          type: string
+          example: Nome
+          description: Nome de usuário
+        password:
+          type: string
+          example: MinhaSenha123
+          description: Senha de acesso
+
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+          example: 1
+          description: ID do contato
+        name:
+          type: string
+          example: Nome
+          description: Nome do contato
+        alias:
+          type: string
+          example: Apelido
+          description: Apelido do contato
+        phone:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        email:
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+        deleted:
+          type: boolean
+          example: false
+          description: Contato deletado
+
+    Phone:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+          example: 1
+          description: ID do telefone
+        phone:
+          type: string
+          example: '0000-0000'
+          description: Telefone do contato
+        deleted:
+          type: boolean
+          example: false
+          description: Telefone deletado
+    
+    Email:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int
+          example: 1
+          description: ID do e-mail
+        email:
+          type: string
+          example: 'email@gmail.com'
+          description: E-mail do contato
+        deleted:
+          type: boolean
+          example: false
+          description: E-mail deletado
+          
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date
+          example: '2020-01-01T12:00:00.000Z'
+          description: Data do erro
+        status:
+          type: integer
+          format: int
+          example: 500
+          description: Código do erro
+        error:
+          type: string
+          example: Internal Server Error
+          description: Nome do erro
+        message:
+          type: string
+          example: Não foi possível ...
+          description: Mensagem de erro
+        path:
+          type: string
+          example: /exemplo
+          description: Caminho usado
+        method:
+          type: string
+          example: POST
+          description: Método usado
+          
+  examples:
+    User:
+      value:
+        username: Nome
+        password: MinhaSenha123
+      summary: Usuário
+      
+    NewContact:
+      value:
+        name: Nome
+        alias: Apelido
+        phone:
+          - id: 1
+            phone: '0000-0000'
+        email:
+          - id: 1
+            email: 'email@gmail.com'
+      summary: Novo Contato
+
+    UpdateContact:
+      value:
+        name: Nome
+        alias: Apelido
+        phone:
+          - id: 1
+            phone: '0000-0000'
+            deleted: false
+        email:
+          - id: 1
+            email: 'email@gmail.com'
+            deleted: false
+      summary: Atualizar Contato
+      
+    ContactReturn:
+      value:
+        id: 1
+        nome: Nome
+        alias: Apelido
+        phone:
+          - id: 1
+            phone: '0000-0000'
+        email:
+          - id: 1
+            email: email@gmail.com
+      summary: Retorno de Contato
+      
+    ContactsReturn:
+      value:
+        - id: 1
+          nome: Nome
+          alias: Apelido
+          phone:
+            - id: 1
+              phone: '0000-0000'
+          email:
+            - id: 1
+              email: email@gmail.com
+      summary: Retorno de Contatos
+  
+    Error400:
+      value:
+        timestamp: '2020-01-01T12:00:00.000Z'
+        status: 400
+        erro: Bad Request
+        message: ... não informado
+        path: /exemplo
+        method: GET
+      summary: Erro 400
+  
+    Error401:
+      value:
+        timestamp: '2020-01-01T12:00:00.000Z'
+        status: 401
+        erro: Unauthorized
+        message: ... não autorizado
+        path: /exemplo
+        method: GET
+      summary: Erro 401
+  
+    Error404:
+      value:
+        timestamp: '2020-01-01T12:00:00.000Z'
+        status: 404
+        erro: Not Found
+        message: ... não encontrado
+        path: /exemplo
+        method: GET
+      summary: Erro 404
+  
+    Error409:
+      value:
+        timestamp: '2020-01-01T12:00:00.000Z'
+        status: 409
+        erro: Conflict
+        message: ... já existe
+        path: /exemplo
+        method: GET
+      summary: Erro 409
+      
+    Error500:
+      value:
+        timestamp: '2020-01-01T12:00:00.000Z'
+        status: 500
+        erro: Internal Server Erro
+        message: Não foi possível ...
+        path: /exemplo
+        method: GET
+      summary: Erro 500
+        
+paths:
+# ------------- User -------------
+  /users:
+    post:
+      tags:
+        - User
+      summary: Cria um usuário
+      description: Cria um usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples:
+              User:
+                $ref: '#/components/examples/User'
+      responses:
+        '201':
+          description: Usuário criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '409':
+          description: Usuário já existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error409'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error500'
+
+# ------------- Session -------------
+  /login:
+    post:
+      tags:
+        - User
+      summary: Retorna um token de autorização no cabeçalho
+      description: Retorna um token de autorização no cabeçalho
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples:
+              User:
+                $ref: '#/components/examples/User'
+      responses:
+        '200':
+          description: Token de autorização retornado no cabeçalho
+        '404':
+          description: Usuário não encontrado ou senha incorreta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error500'
+
+# ------------- Contact -------------
+  /contacts:
+    post:
+      tags:
+        - Contact
+      summary: Adiciona um contato
+      description: Adiciona um contato
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: Exemplo de Contato
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+            examples:
+              Contact:
+                $ref: '#/components/examples/NewContact'
+      responses:
+        '201':
+          description: Contato adicionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+              examples:
+                Contact:
+                  $ref: '#/components/examples/ContactReturn'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error500'
+
+    get:
+      tags:
+        - Contact
+      summary: Retorna uma lista de contatos
+      description: Retorna uma lista de contatos
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de contatos retornada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+              examples:
+                Contacts:
+                  $ref: '#/components/examples/ContactsReturn'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error500'
+
+  /contacts/{id}:
+    put:
+      tags:
+        - Contact
+      summary: Atualiza um contato
+      description: Atualiza um contato
+      parameters:
+        - in: path
+          name: id
+          description: id do Contato
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: Exemplo de Contato
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+            examples:
+              Contact:
+                $ref: '#/components/examples/UpdateContact'
+      responses:
+        '204':
+          description: Contato atualizado
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error401'
+        '404':
+          description: Contato não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Erro:
+                  $ref: '#/components/examples/Error500'
+
+    delete:
+      tags:
+        - Contact
+      summary: Exclui um contato
+      description: Exclui um contato
+      parameters:
+        - in: path
+          name: id
+          description: id do Contato
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Contato excluído
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error401'
+        '404':
+          description: Contato não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Error:
+                  $ref: '#/components/examples/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Erro:
+                  $ref: '#/components/examples/Error500'
