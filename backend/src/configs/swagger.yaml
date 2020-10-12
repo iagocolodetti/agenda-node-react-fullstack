@@ -146,11 +146,11 @@ components:
         name: Nome
         alias: Apelido
         phone:
-          - id: 1
-            phone: '0000-0000'
+          - phone: '0000-0000'
+          - phone: '1111-1111'
         email:
-          - id: 1
-            email: 'email@gmail.com'
+          - email: 'email@gmail.com'
+          - email: 'email@hotmail.com'
       summary: Novo Contato
 
     UpdateContact:
@@ -160,11 +160,17 @@ components:
         phone:
           - id: 1
             phone: '0000-0000'
-            deleted: false
+          - id: 2
+            phone: '1111-1111'
+            deleted: true
+          - phone: '2222-2222'
         email:
           - id: 1
-            email: 'email@gmail.com'
-            deleted: false
+            email: 'email1@gmail.com'
+          - id: 2
+            email: 'email2@hotmail.com'
+            deleted: true
+          - email: 'email3@gmail.com'
       summary: Atualizar Contato
       
     ContactReturn:
@@ -175,22 +181,43 @@ components:
         phone:
           - id: 1
             phone: '0000-0000'
+          - id: 2
+            phone: '1111-1111'
         email:
           - id: 1
             email: email@gmail.com
+          - id: 2
+            email: email@hotmail.com
       summary: Retorno de Contato
       
     ContactsReturn:
       value:
         - id: 1
-          nome: Nome
-          alias: Apelido
+          nome: Nome1
+          alias: Apelido1
           phone:
             - id: 1
               phone: '0000-0000'
+            - id: 2
+              phone: '1111-1111'
           email:
             - id: 1
-              email: email@gmail.com
+              email: email1@gmail.com
+            - id: 2
+              email: email2@hotmail.com
+        - id: 2
+          nome: Nome2
+          alias: Apelido2
+          phone:
+            - id: 3
+              phone: '2222-2222'
+            - id: 4
+              phone: '3333-3333'
+          email:
+            - id: 3
+              email: email3@gmail.com
+            - id: 4
+              email: email4@hotmail.com
       summary: Retorno de Contatos
   
     Error400:
@@ -443,7 +470,7 @@ paths:
         - bearerAuth: []
       requestBody:
         required: true
-        description: Exemplo de Contato
+        description: 'Exemplo de Contato (phone / email: com "deleted" para excluir [2] | sem "id" para adicionar [3])'
         content:
           application/json:
             schema:
