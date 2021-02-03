@@ -21,6 +21,8 @@ function Main() {
 
   const dispatch = useDispatch();
 
+  const contacts = useSelector(state => state.contacts);;
+
   useEffect(() => {
     async function fetchData() {
       if (authorization) {

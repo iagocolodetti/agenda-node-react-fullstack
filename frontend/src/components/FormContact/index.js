@@ -26,14 +26,18 @@ function FormContact() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [phones, setPhones] = useState([]);
+  const [lastPhoneID, setLastPhoneID] = useState(0);
   const [emails, setEmails] = useState([]);
+  const [lastEmailID, setLastEmailID] = useState(0);
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
     setMessage(null);
     setPhone('');
+    setLastPhoneID(0);
     setEmail('');
+    setLastEmailID(0);
     if (contact === null) {
       setName('');
       setAlias('');
@@ -50,8 +54,9 @@ function FormContact() {
   function addPhone(e) {
     e.preventDefault();
     if (phone.length > 0) {
+      setLastPhoneID(lastPhoneID - 1);
       setPhones([...phones, {
-        'id': phones.length === 0 ? 0 : phones[phones.length - 1].id + 1,
+        'id': lastPhoneID,
         'phone': phone
       }]);
       setPhone('');
@@ -61,7 +66,7 @@ function FormContact() {
   function deletePhone(e) {
     e.preventDefault();
     const phone = JSON.parse(e.currentTarget.value);
-    if (contact === null) {
+    if (phone.id < 0) {
       setPhones(phones.filter(p => p.id !== phone.id));
     } else {
       setPhones([...phones.filter(p => p.id !== phone.id), { ...phone, deleted: true }]);
@@ -91,8 +96,9 @@ function FormContact() {
   function addEmail(e) {
     e.preventDefault();
     if (email.length > 0) {
+      setLastEmailID(lastEmailID - 1);
       setEmails([...emails, {
-        'id': emails.length === 0 ? 0 : emails[emails.length - 1].id + 1,
+        'id': lastEmailID,
         'email': email
       }]);
       setEmail('');
@@ -102,7 +108,7 @@ function FormContact() {
   function deleteEmail(e) {
     e.preventDefault();
     const email = JSON.parse(e.currentTarget.value);
-    if (contact === null) {
+    if (email.id < 0) {
       setEmails(emails.filter(e => e.id !== email.id));
     } else {
       setEmails([...emails.filter(e => e.id !== email.id), { ...email, deleted: true }]);
@@ -140,8 +146,10 @@ function FormContact() {
       setName('');
       setAlias('');
       setPhones([]);
+      setLastPhoneID(0);
       setPhone('');
       setEmails([]);
+      setLastEmailID(0);
       setEmail('');
     } else {
       dispatch(actions.contactActions.setContact(null));
@@ -167,8 +175,10 @@ function FormContact() {
         setName('');
         setAlias('');
         setPhones([]);
+        setLastPhoneID(0);
         setPhone('');
         setEmails([]);
+        setLastEmailID(0);
         setEmail('');
       } catch (error) {
         if (error.response.data.status === 401) {
