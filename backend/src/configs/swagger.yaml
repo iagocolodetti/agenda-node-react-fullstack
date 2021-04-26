@@ -413,6 +413,19 @@ paths:
         - Contact
       summary: Retorna uma lista de contatos
       description: Retorna uma lista de contatos
+      parameters:
+        - in: query
+          name: page
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: size
+          description: Tamanho da página (quantidade de itens)
+          required: false
+          schema:
+            type: integer
       security:
         - bearerAuth: []
       responses:

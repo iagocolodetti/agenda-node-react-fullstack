@@ -79,6 +79,14 @@ module.exports = {
   async read(request, response) {
     try {
       const user_id = jwtUtil.getIdFromToken(request.headers['authorization']);
+      let { page, size } = request.query;
+      if (!page || page < 0) {
+        page = null;
+        size = null;
+      } else {
+        size = (!size || size < 1) ? 10 : parseInt(size);
+        page = page * size;
+      }
       try {
         const result = await Contact.findAll({
           where: {
@@ -114,6 +122,8 @@ module.exports = {
               ]
             }
           ],
+          offset: page,
+          limit: size,
           raw: false
         });
         let contacts = [];

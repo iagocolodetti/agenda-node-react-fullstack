@@ -80,6 +80,20 @@ describe('controllers', () => {
       expect(response.body).not.toBe([]);
     });
 
+    describe('Pagination', () => {
+      it('should read contact list and page one must have one item', async () => {
+        const response = await request(app).get('/contacts').set('authorization', AUTHORIZATION).query({ page: 0, size: 1 });
+        expect(response.status).toBe(200);
+        expect(response.body.length).toBe(1);
+      });
+  
+      it('should read contact list and page two must be empty', async () => {
+        const response = await request(app).get('/contacts').set('authorization', AUTHORIZATION).query({ page: 1, size: 1 });
+        expect(response.status).toBe(200);
+        expect(response.body.length).toBe(0);
+      });
+    })
+
     it('should update a contact', async () => {
       MOCK_CONTACT = { ...MOCK_CONTACT, alias: 'NewNickname' };
       MOCK_CONTACT.email[0] = { ...MOCK_CONTACT.email[0], deleted: true };
