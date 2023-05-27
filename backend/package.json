@@ -1,19 +1,20 @@
 {
   "name": "agenda-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Agenda de contatos",
   "main": "server.js",
   "author": "Iago Colodetti",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon src/server.js",
-    "test": "cross-env NODE_ENV=test jest --verbose --watchAll"
+    "dev": "cross-env NODE_ENV=env.development nodemon src/server.js",
+    "test": "cross-env NODE_ENV=env.test jest --verbose --watchAll"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.3.2",

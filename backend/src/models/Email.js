@@ -1,7 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
 
-const env = process.env.NODE_ENV;
-
 class Email extends Model {
   static init(sequelize) {
     super.init({
@@ -10,7 +8,7 @@ class Email extends Model {
         required: true
       },
       contact_id: {
-        type: env === 'test' ? DataTypes.INTEGER(11) : DataTypes.INTEGER(11).UNSIGNED,
+        type: process.env.NODE_ENV === 'env.test' ? DataTypes.INTEGER(11) : DataTypes.INTEGER(11).UNSIGNED,
         required: true
       },
       deleted: {

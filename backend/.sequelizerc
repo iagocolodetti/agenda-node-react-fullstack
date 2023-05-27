@@ -1,6 +1,9 @@
-const path = require('path');
+const { config } = require('dotenv');
+const { join, resolve } = require('path');
+
+config({ path: join(__dirname, './config/', `.${process.env.NODE_ENV}`) });
 
 module.exports = {
-  config: path.resolve(__dirname, 'src', 'configs', 'database.js'),
-  'migrations-path': path.resolve(__dirname, 'src', 'database', 'migrations')
+  'config': resolve(__dirname, 'src', 'configs', 'database.js'),
+  'migrations-path': resolve(__dirname, 'src', 'database', 'migrations')
 }
