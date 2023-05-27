@@ -1,4 +1,4 @@
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const AUTH_KEY = 'agendaApiAuth';
 const AUTH_ERROR_KEY = 'agendaApiAuthError';
@@ -59,7 +59,7 @@ async function clear() {
   }
 }
 
-export default {
+const methods = {
   setAuth,
   getAuth,
   removeAuth,
@@ -68,3 +68,5 @@ export default {
   removeAuthError,
   clear
 };
+
+export default methods;

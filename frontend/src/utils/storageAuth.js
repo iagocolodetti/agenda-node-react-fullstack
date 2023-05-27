@@ -29,7 +29,7 @@ function clear() {
   localStorage.clear();
 }
 
-export default {
+const methods = {
   setAuth,
   getAuth,
   removeAuth,
@@ -38,3 +38,5 @@ export default {
   removeAuthError,
   clear
 };
+
+export default methods;

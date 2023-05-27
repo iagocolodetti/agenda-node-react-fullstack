@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import './styles.css';
 import '../../bootstrap-float-label.min.css';
@@ -11,7 +11,7 @@ import userService from '../../services/userService';
 import storageAuth from '../../utils/storageAuth';
 
 function NewUser() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -20,9 +20,9 @@ function NewUser() {
 
   useEffect(() => {
     if (storageAuth.getAuth()) {
-      history.push('/contacts');
+      navigate('/contacts');
     }
-  }, [history]);
+  }, [navigate]);
 
   async function submit(e) {
     e.preventDefault();
@@ -58,16 +58,16 @@ function NewUser() {
           <h4 className="mb-3 text-muted">Novo Usuário</h4>
           <form className="card mb-4 justify-content-center" onSubmit={submit}>
             <div className="card-body">
-              <label class="form-group has-float-label">
-                <input class="form-control" type="text" id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Nome" required />
+              <label className="form-group has-float-label">
+                <input className="form-control" type="text" id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Nome" required />
                 <span>Nome</span>
               </label>
-              <label class="form-group has-float-label">
-                <input class="form-control" type="password" id="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Senha" required />
+              <label className="form-group has-float-label">
+                <input className="form-control" type="password" id="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Senha" required />
                 <span>Senha</span>
               </label>
-              <label class="form-group has-float-label">
-                <input class="form-control" type="password" id="passwordConfirm" name="passwordConfirm" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} placeholder="Confirme a Senha" required />
+              <label className="form-group has-float-label">
+                <input className="form-control" type="password" id="passwordConfirm" name="passwordConfirm" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} placeholder="Confirme a Senha" required />
                 <span>Confirme a Senha</span>
               </label>
               {message}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 
@@ -10,7 +10,7 @@ import storageAuth from '../../utils/storageAuth';
 function ContactCard(props) {
   const { contact } = props;
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const authorization = storageAuth.getAuth();
 
@@ -32,7 +32,7 @@ function ContactCard(props) {
         if (error.response.data.status === 401) {
           storageAuth.removeAuth();
           storageAuth.setAuthError(error.response.data.message);
-          history.push('/login');
+          navigate('/login');
         } else {
           alert(error.response ? `Erro: ${error.response.data.message}.` : 'Erro: Não foi possível deletar o contato.');
         }

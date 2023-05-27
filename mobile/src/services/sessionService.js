@@ -8,6 +8,8 @@ async function create(username, password) {
   }
 }
 
-export default {
+const methods = {
   create
 };
+
+export default methods;

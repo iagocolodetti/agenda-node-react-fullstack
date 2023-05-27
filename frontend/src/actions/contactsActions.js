@@ -19,8 +19,10 @@ function destroyContact(id) {
   };
 }
 
-export default {
+const methods = {
   addContact,
   setContacts,
   destroyContact
 };
+
+export default methods;

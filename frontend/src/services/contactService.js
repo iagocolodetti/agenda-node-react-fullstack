@@ -32,10 +32,11 @@ async function destroy(authorization, id) {
   }
 }
 
-
-export default {
+const methods = {
   create,
   read,
   update,
   destroy
 };
+
+export default methods;

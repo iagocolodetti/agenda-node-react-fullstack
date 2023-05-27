@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../actions';
 
@@ -15,7 +15,7 @@ import contactService from '../../services/contactService';
 import storageAuth from '../../utils/storageAuth';
 
 function Main() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const authorization = storageAuth.getAuth();
   const [message, setMessage] = useState(null);
 
@@ -35,17 +35,17 @@ function Main() {
           if (error.response.data.status === 401) {
             storageAuth.removeAuth();
             storageAuth.setAuthError(error.response.data.message);
-            history.push('/login');
+            navigate('/login');
           } else {
             setMessage(<DivAlert message={(error.response ? `Erro: ${error.response.data.message}.` : 'Erro: Não foi possível buscar os contatos.') + ' Tente recarregar a página.'} alert={'alert-danger'} />);
           }
         }
       } else {
-        history.push('/login');
+        navigate('/login');
       }
     }
     fetchData();
-  }, [authorization, dispatch, history]);
+  }, [authorization, dispatch, navigate]);
 
   return (
     <>

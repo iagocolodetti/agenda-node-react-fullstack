@@ -1,6 +1,5 @@
-  
-import React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet } from 'react-native';
 
 import Routes from './src/routes';
 

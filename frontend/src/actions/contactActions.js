@@ -5,6 +5,8 @@ function setContact(contact = null) {
   };
 }
 
-export default {
+const methods = {
   setContact
 };
+
+export default methods;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import './styles.css';
 import '../../bootstrap-float-label.min.css';
@@ -11,7 +11,7 @@ import sessionService from '../../services/sessionService';
 import storageAuth from '../../utils/storageAuth';
 
 function Login() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authorization, setAuthorization] = useState('');
@@ -20,7 +20,7 @@ function Login() {
 
   useEffect(() => {
     if (storageAuth.getAuth()) {
-      history.push('/contacts');
+      navigate('/contacts');
     } else {
       const error = storageAuth.getAuthError();
       if (error) {
@@ -28,7 +28,7 @@ function Login() {
         storageAuth.removeAuthError();
       }
     }
-  }, [authorization, history]);
+  }, [authorization, navigate]);
 
   async function submit(e) {
     e.preventDefault();
@@ -59,12 +59,12 @@ function Login() {
           <h4 className="mb-3 text-muted">Login</h4>
           <form className="card mb-4 justify-content-center" onSubmit={submit}>
             <div className="card-body">
-              <label class="form-group has-float-label">
-                <input class="form-control" type="text" id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Nome" required />
+              <label className="form-group mb-2 has-float-label">
+                <input className="form-control" type="text" id="username" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Nome" required />
                 <span>Nome</span>
               </label>
-              <label class="form-group has-float-label">
-                <input class="form-control" type="password" id="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Senha" required />
+              <label className="form-group mb-3 has-float-label">
+                <input className="form-control" type="password" id="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Senha" required />
                 <span>Senha</span>
               </label>
               {message}

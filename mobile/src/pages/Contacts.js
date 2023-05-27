@@ -26,7 +26,7 @@ function Contacts({ navigation }) {
           if (Array.isArray(response.data) && response.data.length > 0) {
             setContacts(response.data.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)));
           } else {
-            setMensagem(customAlert('Não há contatos cadastrados', 'danger'));
+            setMessage(customAlert('Não há contatos cadastrados', 'danger'));
           }
         } catch (error) {
           if (error.response.data.status === 401) {

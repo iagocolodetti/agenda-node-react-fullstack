@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../actions';
 
@@ -13,7 +13,7 @@ import contactService from '../../services/contactService';
 import storageAuth from '../../utils/storageAuth';
 
 function FormContact() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const authorization = storageAuth.getAuth();
 
@@ -184,7 +184,7 @@ function FormContact() {
         if (error.response.data.status === 401) {
           storageAuth.removeAuth();
           storageAuth.setAuthError(error.response.data.message);
-          history.push('/login');
+          navigate('/login');
         } else {
           setMessage(<DivAlert message={error.response ? `Erro: ${error.response.data.message}.` : 'Erro: Não foi possível salvar o contato.'} alert={'alert-danger'} />);
         }
@@ -209,7 +209,7 @@ function FormContact() {
         if (error.response.data.status === 401) {
           storageAuth.removeAuth();
           storageAuth.setAuthError(error.response.data.message);
-          history.push('/login');
+          navigate('/login');
         } else {
           setMessage(<DivAlert message={error.response ? `Erro: ${error.response.data.message}.` : 'Erro: Não foi possível atualizar o contato.'} alert={'alert-danger'} />);
         }
