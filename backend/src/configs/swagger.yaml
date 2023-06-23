@@ -2,7 +2,7 @@ openapi: '3.0.2'
 info:
   title: agenda-node-react-fullstack
   description: Agenda de contatos.
-  version: '1.0.0'
+  version: '1.0.1'
   contact:
     name: Iago Colodetti
     url: https://github.com/iagocolodetti
