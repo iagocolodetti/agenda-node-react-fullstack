@@ -33,15 +33,14 @@ function NewContact({ navigation }) {
   function addPhone() {
     if (phone.length > 0) {
       setPhones([...phones, {
-        'id': phones.length === 0 ? 0 : phones[phones.length - 1].id + 1,
         'phone': phone
       }]);
       setPhone('');
     }
   }
 
-  function deletePhone(phone) {
-    setPhones(phones.filter(p => p.id !== phone.id));
+  function deletePhone(idx) {
+    setPhones(phones.filter((_, i) => i !== idx));
   }
 
   function PhoneList() {
@@ -51,9 +50,9 @@ function NewContact({ navigation }) {
           <Text style={styles.textInfo}>Telefone(s)</Text>
           <View style={styles.viewList}>
             {phones.map((p, i) => (
-              <View style={i === phones.length - 1 ? styles.listItemNoBorder : styles.listItem} key={p.id}>
+              <View style={i === phones.length - 1 ? styles.listItemNoBorder : styles.listItem} key={i}>
                 <Text style={styles.textItem}>{p.phone}</Text>
-                <TouchableOpacity hitSlop={{ top: 1, bottom: 30 }} onPress={() => deletePhone(p)}>
+                <TouchableOpacity hitSlop={{ top: 1, bottom: 30 }} onPress={() => deletePhone(i)}>
                   <View style={styles.buttonItem}>
                     <Icon name="trash-alt" size={16} color="#f00" />
                   </View>
@@ -69,15 +68,14 @@ function NewContact({ navigation }) {
   function addEmail() {
     if (email.length > 0) {
       setEmails([...emails, {
-        'id': emails.length === 0 ? 0 : emails[emails.length - 1].id + 1,
         'email': email
       }]);
       setEmail('');
     }
   }
 
-  function deleteEmail(email) {
-    setEmails(emails.filter(e => e.id !== email.id));
+  function deleteEmail(idx) {
+    setEmails(emails.filter((_, i) => i !== idx));
   }
 
   function EmailList() {
@@ -87,9 +85,9 @@ function NewContact({ navigation }) {
           <Text style={styles.textInfo}>E-mail(s)</Text>
           <View style={styles.viewList}>
             {emails.map((e, i) => (
-              <View style={i === emails.length - 1 ? styles.listItemNoBorder : styles.listItem} key={e.id}>
+              <View style={i === emails.length - 1 ? styles.listItemNoBorder : styles.listItem} key={i}>
                 <Text style={styles.textItem}>{e.email}</Text>
-                <TouchableOpacity hitSlop={{ top: 1, bottom: 36 }} onPress={() => deleteEmail(e)}>
+                <TouchableOpacity hitSlop={{ top: 1, bottom: 36 }} onPress={() => deleteEmail(i)}>
                   <View style={styles.buttonItem}>
                     <Icon name="trash-alt" size={16} color="#f00" />
                   </View>

@@ -12,29 +12,18 @@ module.exports = {
   async create(request, response) {
     try {
       const user_id = jwtUtil.getIdFromToken(request.headers['authorization']);
-      let transaction;
       try {
-        transaction = await db.getTransaction();
         const { name, alias, phone, email } = request.body;
-        const contact_result = await Contact.create({
-          name,
-          alias,
-          user_id
-        }, { transaction });
+        const contact_result = await Contact.create({ name, alias, phone, email, user_id }, {
+          include: [{
+            model: Phone,
+            as: Phone.tableName,
+          },{
+            model: Email,
+            as: Email.tableName,
+          }]
+        });
         const { id: contact_id } = contact_result.get({ plain: true });
-        await Promise.all(phone.map(async ({ phone }) => {
-          await Phone.create({
-            phone,
-            contact_id
-          }, { transaction });
-        }));
-        await Promise.all(email.map(async ({ email }) => {
-          await Email.create({
-            email,
-            contact_id
-          }, { transaction });
-        }));
-        transaction.commit();
         const result = await Contact.findOne({
           where: {
             id: contact_id
@@ -63,10 +52,7 @@ module.exports = {
         });
         response.status(201);
         response.json(result.get({ plain: true }));
-      } catch (error) {
-        if (transaction) {
-          transaction.rollback();
-        }
+      } catch {
         response.status(500);
         response.json(JsonError(request, response, 'Não foi possível cadastrar o contato'));
       }
@@ -98,29 +84,26 @@ module.exports = {
             'name',
             'alias'
           ],
-          include: [
-            {
-              model: Phone,
-              as: Phone.tableName,
-              where: {
-                deleted: 0
-              },
-              attributes: [
-                'id',
-                'phone'
-              ]
+          include: [{
+            model: Phone,
+            as: Phone.tableName,
+            where: {
+              deleted: 0
             },
-            {
-              model: Email,
-              as: Email.tableName,
-              where: {
-                deleted: 0
-              },
-              attributes: [
-                'id',
-                'email'
-              ]
-            }
+            attributes: [
+              'id',
+              'phone'
+            ]
+          },{
+            model: Email,
+            as: Email.tableName,
+            where: {
+              deleted: 0
+            },
+            attributes: [
+              'id',
+              'email'
+            ]}
           ],
           offset: page,
           limit: size,
@@ -159,29 +142,27 @@ module.exports = {
             'name',
             'alias'
           ],
-          include: [
-            {
-              model: Phone,
-              as: Phone.tableName,
-              where: {
-                deleted: 0
-              },
-              attributes: [
-                'id',
-                'phone'
-              ]
+          include: [{
+            model: Phone,
+            as: Phone.tableName,
+            where: {
+              deleted: 0
             },
-            {
-              model: Email,
-              as: Email.tableName,
-              where: {
-                deleted: 0
-              },
-              attributes: [
-                'id',
-                'email'
-              ]
-            }
+            attributes: [
+              'id',
+              'phone'
+            ]
+          },{
+            model: Email,
+            as: Email.tableName,
+            where: {
+              deleted: 0
+            },
+            attributes: [
+              'id',
+              'email'
+            ]
+          }
           ],
           raw: false
         });
@@ -203,7 +184,7 @@ module.exports = {
             }, { transaction });
           }));
           await contact_result.update({ name, alias }, { transaction });
-          transaction.commit();
+          await transaction.commit();
           response.sendStatus(204);
         } else {
           response.status(404);
@@ -211,7 +192,7 @@ module.exports = {
         }
       } catch (error) {
         if (transaction) {
-          transaction.rollback();
+          await transaction.rollback();
         }
         response.status(500);
         response.json(JsonError(request, response, 'Não foi possível atualizar o contato'));

@@ -26,18 +26,14 @@ function FormContact() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [phones, setPhones] = useState([]);
-  const [lastPhoneID, setLastPhoneID] = useState(0);
   const [emails, setEmails] = useState([]);
-  const [lastEmailID, setLastEmailID] = useState(0);
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
     setMessage(null);
     setPhone('');
-    setLastPhoneID(0);
     setEmail('');
-    setLastEmailID(0);
     if (contact === null) {
       setName('');
       setAlias('');
@@ -54,9 +50,7 @@ function FormContact() {
   function addPhone(e) {
     e.preventDefault();
     if (phone.length > 0) {
-      setLastPhoneID(lastPhoneID - 1);
       setPhones([...phones, {
-        'id': lastPhoneID,
         'phone': phone
       }]);
       setPhone('');
@@ -65,11 +59,11 @@ function FormContact() {
 
   function deletePhone(e) {
     e.preventDefault();
-    const phone = JSON.parse(e.currentTarget.value);
-    if (phone.id < 0) {
-      setPhones(phones.filter(p => p.id !== phone.id));
+    const idx = Number(e.currentTarget.value);
+    if (phones[idx].id === undefined) {
+      setPhones(phones.filter((_, i) => i !== idx));
     } else {
-      setPhones([...phones.filter(p => p.id !== phone.id), { ...phone, deleted: true }]);
+      setPhones([...phones.filter((_, i) => i !== idx), { ...phones[idx], deleted: true }]);
     }
   }
 
@@ -79,10 +73,10 @@ function FormContact() {
         <>
           <h6 className="card-subtitle mb-1 text-muted">Telefone(s)</h6>
           <ul className="list-group text-center mb-2">
-            {phones.map(p => p.deleted === undefined || p.deleted === false ? (
-              <li className="list-group-item d-flex justify-content-between align-items-center" key={p.id}>
+            {phones.map((p, i) => p.deleted === undefined || p.deleted === false ? (
+              <li className="list-group-item d-flex justify-content-between align-items-center" key={i}>
                 {p.phone}
-                <button className="btn btn-outline-danger btn-sm" value={JSON.stringify(p)} onClick={deletePhone}>
+                <button className="btn btn-outline-danger btn-sm" value={i} onClick={deletePhone}>
                   <span className="fa fa-trash" />
                 </button>
               </li>
@@ -96,9 +90,7 @@ function FormContact() {
   function addEmail(e) {
     e.preventDefault();
     if (email.length > 0) {
-      setLastEmailID(lastEmailID - 1);
       setEmails([...emails, {
-        'id': lastEmailID,
         'email': email
       }]);
       setEmail('');
@@ -107,11 +99,11 @@ function FormContact() {
 
   function deleteEmail(e) {
     e.preventDefault();
-    const email = JSON.parse(e.currentTarget.value);
-    if (email.id < 0) {
-      setEmails(emails.filter(e => e.id !== email.id));
+    const idx = Number(e.currentTarget.value);
+    if (emails[idx].id === undefined) {
+      setEmails(emails.filter((_, i) => i !== idx));
     } else {
-      setEmails([...emails.filter(e => e.id !== email.id), { ...email, deleted: true }]);
+      setEmails([...emails.filter((_, i) => i !== idx), { ...emails[idx], deleted: true }]);
     }
   }
 
@@ -121,10 +113,10 @@ function FormContact() {
         <>
           <h6 className="card-subtitle mb-1 text-muted">E-mail(s)</h6>
           <ul className="list-group text-center mb-2">
-            {emails.map(e => e.deleted === undefined || e.deleted === false ? (
-              <li className="list-group-item d-flex justify-content-between align-items-center" key={e.id}>
+            {emails.map((e, i) => e.deleted === undefined || e.deleted === false ? (
+              <li className="list-group-item d-flex justify-content-between align-items-center" key={i}>
                 {e.email}
-                <button className="btn btn-outline-danger btn-sm" value={JSON.stringify(e)} onClick={deleteEmail}>
+                <button className="btn btn-outline-danger btn-sm" value={i} onClick={deleteEmail}>
                   <span className="fa fa-trash" />
                 </button>
               </li>
@@ -146,10 +138,8 @@ function FormContact() {
       setName('');
       setAlias('');
       setPhones([]);
-      setLastPhoneID(0);
       setPhone('');
       setEmails([]);
-      setLastEmailID(0);
       setEmail('');
     } else {
       dispatch(actions.contactActions.setContact(null));
@@ -175,10 +165,8 @@ function FormContact() {
         setName('');
         setAlias('');
         setPhones([]);
-        setLastPhoneID(0);
         setPhone('');
         setEmails([]);
-        setLastEmailID(0);
         setEmail('');
       } catch (error) {
         if (error.response.data.status === 401) {
