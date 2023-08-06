@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { ValidationError } = require('sequelize');
 
 const JsonError = require('../errors/JsonError');
 
@@ -13,9 +14,14 @@ module.exports = {
       await User.create({ username, password });
       response.sendStatus(201);
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        response.status(409);
-        response.json(JsonError(request, response, 'Usuário já existe'));
+      if (error instanceof ValidationError) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+          response.status(409);
+          response.json(JsonError(request, response, 'Usuário já existe'));
+        } else {
+          response.status(400);
+          response.json(JsonError(request, response, error.message.replace('Validation error: ', '')));
+        }
       } else {
         response.status(500);
         response.json(JsonError(request, response, 'Não foi possível criar o usuário'));

@@ -47,7 +47,7 @@ DROP TABLE IF EXISTS `email`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `email` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(60) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `contact_id` int(11) unsigned NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,

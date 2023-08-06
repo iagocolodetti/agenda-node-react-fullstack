@@ -1,3 +1,5 @@
+const { ValidationError } = require('sequelize');
+
 const database = require('../database');
 
 const Contact = require('../models/Contact');
@@ -29,12 +31,17 @@ module.exports = {
         await transaction.commit();
         response.status(201);
         response.json(result.get({ plain: true }));
-      } catch {
+      } catch (error) {
         if (transaction) {
           await transaction.rollback();
         }
-        response.status(500);
-        response.json(JsonError(request, response, 'Não foi possível cadastrar o contato'));
+        if (error instanceof ValidationError) {
+          response.status(400);
+          response.json(JsonError(request, response, error.message.replaceAll('Validation error: ', '')));
+        } else {
+          response.status(500);
+          response.json(JsonError(request, response, 'Não foi possível cadastrar o contato'));
+        }
       }
     } catch (error) {
       response.status(error.status);
@@ -113,12 +120,17 @@ module.exports = {
           response.status(404);
           response.json(JsonError(request, response, 'Contato não encontrado'));
         }
-      } catch {
+      } catch (error) {
         if (transaction) {
           await transaction.rollback();
         }
-        response.status(500);
-        response.json(JsonError(request, response, 'Não foi possível atualizar o contato'));
+        if (error instanceof ValidationError) {
+          response.status(400);
+          response.json(JsonError(request, response, error.message.replaceAll('Validation error: ', '')));
+        } else {
+          response.status(500);
+          response.json(JsonError(request, response, 'Não foi possível atualizar o contato'));
+        }
       }
     } catch (error) {
       response.status(error.status);
