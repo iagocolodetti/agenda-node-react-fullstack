@@ -16,9 +16,26 @@ class Email extends Model {
         required: false
       }
     }, {
+      defaultScope: {
+        where: { deleted: false },
+        attributes: ['id', 'email']
+      },
+      hooks: {
+        afterCreate: (email, options) => {
+          const { dataValues } = email;
+          delete dataValues.contact_id;
+          delete dataValues.deleted;
+          delete dataValues.created_at;
+          delete dataValues.updated_at;
+        }
+      },
       tableName: 'email',
       sequelize
     });
+  }
+
+  static getTableName() {
+    return 'email';
   }
 }
 

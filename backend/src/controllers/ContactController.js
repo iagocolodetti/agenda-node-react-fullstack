@@ -1,4 +1,4 @@
-const db = require('../database');
+const database = require('../database');
 
 const Contact = require('../models/Contact');
 const Phone = require('../models/Phone');
@@ -12,47 +12,27 @@ module.exports = {
   async create(request, response) {
     try {
       const user_id = jwtUtil.getIdFromToken(request.headers['authorization']);
+      let transaction;
       try {
+        transaction = await database.getTransaction();
         const { name, alias, phone, email } = request.body;
-        const contact_result = await Contact.create({ name, alias, phone, email, user_id }, {
+        const result = await Contact.create({ name, alias, phone, email, user_id }, {
           include: [{
             model: Phone,
-            as: Phone.tableName,
+            as: Phone.tableName
           },{
             model: Email,
-            as: Email.tableName,
-          }]
-        });
-        const { id: contact_id } = contact_result.get({ plain: true });
-        const result = await Contact.findOne({
-          where: {
-            id: contact_id
-          },
-          attributes: [
-            'id',
-            'name',
-            'alias'
-          ],
-          include: [{
-            model: Phone,
-            as: Phone.tableName,
-            attributes: [
-              'id',
-              'phone'
-            ]
-          }, {
-            model: Email,
-            as: Email.tableName,
-            attributes: [
-              'id',
-              'email'
-            ]
+            as: Email.tableName
           }],
-          raw: false
+          transaction
         });
+        await transaction.commit();
         response.status(201);
         response.json(result.get({ plain: true }));
       } catch {
+        if (transaction) {
+          await transaction.rollback();
+        }
         response.status(500);
         response.json(JsonError(request, response, 'Não foi possível cadastrar o contato'));
       }
@@ -74,47 +54,17 @@ module.exports = {
         page = page * size;
       }
       try {
-        const result = await Contact.findAll({
+        const result = (await Contact.findAll({
           where: {
             user_id,
-            deleted: 0
+            deleted: false
           },
-          attributes: [
-            'id',
-            'name',
-            'alias'
-          ],
-          include: [{
-            model: Phone,
-            as: Phone.tableName,
-            where: {
-              deleted: 0
-            },
-            attributes: [
-              'id',
-              'phone'
-            ]
-          },{
-            model: Email,
-            as: Email.tableName,
-            where: {
-              deleted: 0
-            },
-            attributes: [
-              'id',
-              'email'
-            ]}
-          ],
           offset: page,
           limit: size,
           raw: false
-        });
-        let contacts = [];
-        result.map(contact => {
-          contacts.push(contact.get({ plain: true }));
-        });
-        response.json(contacts);
-      } catch (error) {
+        })).map(contact => contact.get({ plain: true }));
+        response.json(result);
+      } catch {
         response.status(500);
         response.json(JsonError(request, response, 'Não foi possível buscar os contatos'));
       }
@@ -130,43 +80,16 @@ module.exports = {
       const { id: contact_id } = request.params;
       let transaction;
       try {
-        transaction = await db.getTransaction();
+        transaction = await database.getTransaction();
         const { name, alias, phone, email } = request.body;
-        const contact_result = await Contact.findOne({
+        const result = await Contact.findOne({
           where: {
             id: contact_id,
             user_id
           },
-          attributes: [
-            'id',
-            'name',
-            'alias'
-          ],
-          include: [{
-            model: Phone,
-            as: Phone.tableName,
-            where: {
-              deleted: 0
-            },
-            attributes: [
-              'id',
-              'phone'
-            ]
-          },{
-            model: Email,
-            as: Email.tableName,
-            where: {
-              deleted: 0
-            },
-            attributes: [
-              'id',
-              'email'
-            ]
-          }
-          ],
           raw: false
         });
-        if (contact_result) {
+        if (result) {
           await Promise.all(phone.map(async p => {
             await Phone.upsert({
               id: p.id,
@@ -183,14 +106,14 @@ module.exports = {
               deleted: e.deleted
             }, { transaction });
           }));
-          await contact_result.update({ name, alias }, { transaction });
+          await result.update({ name, alias }, { transaction });
           await transaction.commit();
           response.sendStatus(204);
         } else {
           response.status(404);
           response.json(JsonError(request, response, 'Contato não encontrado'));
         }
-      } catch (error) {
+      } catch {
         if (transaction) {
           await transaction.rollback();
         }
@@ -210,17 +133,18 @@ module.exports = {
         const result = await Contact.findOne({
           where: {
             id: request.params.id,
-            user_id
+            user_id,
+            deleted: false
           }
         });
         if (result) {
-          await result.update({ deleted: 1 });
+          await result.update({ deleted: true });
           response.sendStatus(204);
         } else {
           response.status(404);
           response.json(JsonError(request, response, 'Contato não encontrado'));
         }
-      } catch (error) {
+      } catch {
         response.status(500);
         response.json(JsonError(request, response, 'Não foi possível excluir o contato'));
       }

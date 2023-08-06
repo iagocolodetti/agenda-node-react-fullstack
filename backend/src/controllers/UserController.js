@@ -1,7 +1,5 @@
 const User = require('../models/User');
 
-const hashGenerator = require('../utils/hashGenerator');
-
 const JsonError = require('../errors/JsonError');
 
 module.exports = {
@@ -12,8 +10,7 @@ module.exports = {
         response.status(400);
         return response.send(JsonError(request, response, '\'username\' e \'password\' são obrigatórios no corpo da requisição'));
       }
-      const hash = hashGenerator.generate(password)
-      await User.create({ username: username.toLowerCase(), password: hash });
+      await User.create({ username, password });
       response.sendStatus(201);
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {

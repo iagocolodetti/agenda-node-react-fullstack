@@ -9,15 +9,17 @@ module.exports = () => {
     dialect: process.env.DB_DIALECT,
     logging: (/true/i).test(process.env.DB_LOGGING),
     define: {
-      timestamps: (/true/i).test(process.env.DB_TIMESTAMPS),
-      underscored: (/true/i).test(process.env.DB_UNDERSCORED)
+      timestamps: true,
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at'
     }
   };
 
   if (process.env.NODE_ENV === 'env.test') {
     db_config = {
       ...db_config,
-      storage: join(__dirname, process.env.DB_STORAGE)
+      storage: join(__dirname, '../../', process.env.DB_STORAGE)
     };
   } else {
     db_config = {

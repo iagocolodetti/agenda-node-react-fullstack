@@ -16,9 +16,26 @@ class Phone extends Model {
         required: false
       }
     }, {
+      defaultScope: {
+        where: { deleted: false },
+        attributes: ['id', 'phone']
+      },
+      hooks: {
+        afterCreate: (phone, options) => {
+          const { dataValues } = phone;
+          delete dataValues.contact_id;
+          delete dataValues.deleted;
+          delete dataValues.created_at;
+          delete dataValues.updated_at;
+        }
+      },
       tableName: 'phone',
       sequelize
     });
+  }
+
+  static getTableName() {
+    return 'phone';
   }
 }
 

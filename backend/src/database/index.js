@@ -26,6 +26,7 @@ module.exports = {
 
   async close() {
     await sequelize.close();
+    console.log('Conexão com o banco de dados encerrada.');
   },
 
   async getTransaction() {

@@ -1,7 +1,7 @@
 {
   "name": "agenda-frontend",
   "description": "Agenda de contatos",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Iago Colodetti",
   "license": "MIT",
   "private": true,

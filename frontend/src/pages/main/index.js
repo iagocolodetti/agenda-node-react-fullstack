@@ -28,11 +28,12 @@ function Main() {
       if (authorization) {
         try {
           const response = await contactService.read(authorization);
-          if (response.data.length > 0) {
+          if (response.data) {
             dispatch(actions.contactsActions.setContacts(response.data));
           }
         } catch (error) {
           if (error.response.data.status === 401) {
+            dispatch(actions.contactsActions.setContacts([]));
             storageAuth.removeAuth();
             storageAuth.setAuthError(error.response.data.message);
             navigate('/login');

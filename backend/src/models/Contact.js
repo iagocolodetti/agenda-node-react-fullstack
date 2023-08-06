@@ -1,5 +1,8 @@
 const { Model, DataTypes } = require('sequelize');
 
+const Phone = require('./Phone');
+const Email = require('./Email');
+
 class Contact extends Model {
   static init(sequelize) {
     super.init({
@@ -20,6 +23,25 @@ class Contact extends Model {
         required: false
       }
     }, {
+      defaultScope: {
+        include: [{
+          model: Phone,
+          as: Phone.getTableName()
+        },{
+          model: Email,
+          as: Email.getTableName()
+        }],
+        attributes: ['id', 'name', 'alias']
+      },
+      hooks: {
+        afterCreate: (contact, options) => {
+          const { dataValues } = contact;
+          delete dataValues.user_id;
+          delete dataValues.deleted;
+          delete dataValues.created_at;
+          delete dataValues.updated_at;
+        }
+      },
       tableName: 'contact',
       sequelize
     });
